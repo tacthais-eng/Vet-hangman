@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>VET Hangman</title>
+<meta name="theme-color" content="#14213d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="VET Hangman">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-192.png">
+<script>if("serviceWorker" in navigator){addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})})}</script>
+
+</head>
+<body style="margin:0;background:#eef2f7;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)">
+
+<!-- ===== START: copy from here to END into a Squarespace Code Block ===== -->
+<section id="ith">
+<style>
+#ith{--ink:#14213d;--blue:#2f6fed;--amber:#f59e0b;--red:#e5484d;--green:#1a9e5c;--line:#d5dce8;
+ font-family:"Trebuchet MS","Segoe UI",system-ui,sans-serif;color:var(--ink);max-width:720px;margin:0 auto;padding:16px;box-sizing:border-box}
+#ith *{box-sizing:border-box}
+#ith .card{background:#fff;border:2px solid var(--ink);border-radius:14px;padding:18px;box-shadow:5px 5px 0 var(--ink)}
+#ith h2{margin:0 0 4px;font-size:1.5rem}
+#ith .sub{margin:0 0 14px;color:#4a5878;font-size:.95rem}
+#ith [hidden]{display:none!important}
+#ith .bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+#ith .pill{border:2px solid var(--ink);border-radius:999px;padding:3px 12px;font-size:.85rem;font-weight:bold;background:#fff}
+#ith .pill.try{background:var(--amber)}
+#ith .pill.last{background:var(--red);color:#fff}
+#ith .stage{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+#ith svg.hm{width:150px;height:170px;flex:none;overflow:visible}
+#ith svg.hm .g{stroke:var(--ink);stroke-width:4;stroke-linecap:round;fill:none}
+#ith svg.hm .p{stroke:var(--red);stroke-width:5;stroke-linecap:round;fill:none;display:none}
+#ith svg.hm .p.on{display:inline}
+#ith svg.hm.shake{animation:ithshake .3s infinite;transform-origin:50% 0}
+@keyframes ithshake{0%{transform:translate(0,0) rotate(0)}25%{transform:translate(-4px,2px) rotate(-3deg)}50%{transform:translate(4px,-2px) rotate(3deg)}75%{transform:translate(-3px,-2px) rotate(-2deg)}100%{transform:translate(0,0) rotate(0)}}
+#ith .info{flex:1;min-width:200px}
+#ith .hint{background:#e8f0ff;border-left:5px solid var(--blue);padding:8px 10px;border-radius:6px;margin:0 0 10px;font-size:.95rem}
+#ith .word{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+#ith .ch{width:30px;height:40px;border-bottom:4px solid var(--ink);display:grid;place-items:center;font-size:1.5rem;font-weight:bold}
+#ith .keys{display:grid;grid-template-columns:repeat(9,1fr);gap:6px;margin-top:14px}
+#ith .keys button{font:inherit;font-weight:bold;padding:10px 0;border:2px solid var(--ink);border-radius:8px;background:#fff;color:var(--ink);cursor:pointer;min-height:40px}
+#ith .keys button:hover:not(:disabled){background:var(--blue);color:#fff}
+#ith button:focus-visible,#ith input:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+#ith .keys button:disabled{cursor:default}
+#ith .keys button.ok{background:var(--green);color:#fff;border-color:var(--green)}
+#ith .keys button.no{background:#f3d3d4;color:#8a2a2e;border-color:var(--red);text-decoration:line-through}
+#ith .msg{min-height:3.2em;margin-top:14px;padding:10px 12px;border-radius:8px;background:#f4f6fa;font-size:.95rem}
+#ith .msg.win{background:#dcf5e7}
+#ith .msg.lose{background:#fbe3e4}
+#ith .msg.warn{background:#fff1cf;border:2px solid var(--amber);font-weight:bold}
+#ith .btn{font:inherit;font-weight:bold;border:2px solid var(--ink);border-radius:8px;padding:9px 16px;background:var(--blue);color:#fff;cursor:pointer;margin-top:10px}
+#ith .btn.red{background:var(--red)}
+#ith input.nm{font:inherit;width:100%;max-width:300px;padding:9px 12px;border:2px solid var(--ink);border-radius:8px;display:block;margin:8px 0}
+#ith .lb{margin:14px 0 0;padding:10px 14px;border:2px dashed var(--ink);border-radius:10px;background:#fffbea}
+#ith .lb b{display:block;margin-bottom:4px}
+#ith .lb ol{list-style:none;margin:0;padding:0}
+#ith .lb li{display:flex;justify-content:space-between;padding:2px 0}
+#ith #ith-fx{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:9998}
+#ith #ith-cheer{position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden}
+#ith .cheer{position:absolute;font-size:2.2rem;font-weight:900;color:#fff;-webkit-text-stroke:2px var(--ink);text-shadow:3px 3px 0 var(--ink);animation:ithpop 2.4s ease-out forwards;white-space:nowrap}
+@keyframes ithpop{0%{transform:scale(.2) rotate(-8deg);opacity:0}15%{transform:scale(1.25) rotate(4deg);opacity:1}30%{transform:scale(1) rotate(-3deg)}100%{transform:translateY(-70px) scale(1);opacity:0}}
+#ith .wrap{position:relative;width:150px;height:170px;flex:none}
+#ith .wrap svg.hm{display:block}
+#ith #ith-actor{position:absolute;left:0;top:0;width:150px;height:170px;pointer-events:none;z-index:5}
+#ith #ith-actor svg{width:150px;height:170px;overflow:visible;display:block}
+#ith #ith-actor .f{stroke:#e5484d;stroke-width:5;stroke-linecap:round;fill:none}
+#ith #ith-actor .f.head{fill:#fff}
+#ith #ith-actor .smile,#ith #ith-actor .cry,#ith #ith-actor .up{display:none}
+#ith #ith-actor.win .smile,#ith #ith-actor.win .up{display:inline}
+#ith #ith-actor.win .down{display:none}
+#ith #ith-actor.dead .cry{display:inline}
+#ith #ith-actor .tear{fill:#4aa8ff;stroke:none;opacity:0;animation:ithtear .7s ease-in 1.7s infinite}
+@keyframes ithtear{0%{opacity:1;transform:translate(0,0)}100%{opacity:0;transform:translate(20px,0)}}
+#ith #ith-actor.dead .hd{transform-box:fill-box;transform-origin:center;animation:ithsob .16s ease-in-out 1.7s infinite alternate}
+@keyframes ithsob{from{transform:translate(0,0)}to{transform:translate(2px,3px)}}
+#ith #ith-actor.win{animation:ithwalkoff 5s ease-in-out forwards}
+@keyframes ithwalkoff{0%{transform:translate(0,0)}12%{transform:translate(0,25px)}22%{transform:translate(0,25px)}100%{transform:translate(120vw,25px)}}
+#ith #ith-actor.win .leg{transform-origin:105px 105px;animation:ithleg .35s ease-in-out 1.1s infinite alternate}
+#ith #ith-actor.win .leg.b{animation-direction:alternate-reverse}
+@keyframes ithleg{from{transform:rotate(-25deg)}to{transform:rotate(25deg)}}
+#ith #ith-actor.win .arm{transform-origin:105px 72px;animation:itharm .25s ease-in-out infinite alternate}
+#ith #ith-actor.win .arm.b{animation-direction:alternate-reverse}
+@keyframes itharm{from{transform:rotate(-30deg)}to{transform:rotate(30deg)}}
+#ith #ith-actor.win svg{transform-origin:105px 160px;animation:ithdance .3s ease-in-out infinite alternate}
+@keyframes ithdance{from{transform:translateY(0) rotate(-7deg)}to{transform:translateY(-9px) rotate(7deg)}}
+#ith #ith-actor.dead{transform-origin:105px 32px;animation:ithdead 1.6s ease-in forwards}
+@keyframes ithdead{0%{transform:rotate(0)}15%{transform:rotate(-14deg)}30%{transform:rotate(12deg)}45%{transform:rotate(-8deg)}60%{transform:rotate(5deg)}68%{transform:rotate(0) translateY(0)}80%{transform:rotate(0) translateY(25px)}100%{transform:rotate(0) translateY(25px)}}
+#ith #ith-actor.dead svg{transform-origin:105px 135px;animation:ithfall .5s ease-in 1.2s forwards}
+@keyframes ithfall{from{transform:rotate(0)}to{transform:rotate(90deg)}}
+@media(prefers-reduced-motion:reduce){#ith #ith-actor,#ith #ith-actor svg,#ith #ith-actor .leg,#ith #ith-actor .arm,#ith #ith-actor .hd{animation:none!important}#ith #ith-actor .tear{animation:none!important;opacity:1}}
+#ith .dgl{stroke:#8a5a2b;stroke-width:5;stroke-linecap:round;fill:none;transform-box:fill-box;transform-origin:top center}
+#ith .dgt{stroke:#8a5a2b;stroke-width:4;stroke-linecap:round;fill:none;transform-box:fill-box;transform-origin:right bottom}
+#ith #ith-actor svg.dgw{position:absolute;left:0;top:0;display:none}
+#ith #ith-actor.win svg.dgw{display:block;animation:none}
+#ith #ith-actor.win .dgrp{animation:ithdogin .8s ease-out .45s backwards}
+@keyframes ithdogin{0%{opacity:0;transform:translateX(90px)}15%{opacity:1}100%{opacity:1;transform:none}}
+#ith #ith-actor.win .dgb{animation:ithtrot .25s ease-in-out 1.2s infinite alternate}
+@keyframes ithtrot{from{transform:translateY(0)}to{transform:translateY(-3px)}}
+#ith #ith-actor.win .dgl.a{animation:ithdl .25s ease-in-out .45s infinite alternate}
+#ith #ith-actor.win .dgl.b{animation:ithdl .25s ease-in-out .45s infinite alternate-reverse}
+@keyframes ithdl{from{transform:rotate(-28deg)}to{transform:rotate(28deg)}}
+#ith #ith-actor.win .dgt{animation:ithwag .15s ease-in-out infinite alternate}
+@keyframes ithwag{from{transform:rotate(-18deg)}to{transform:rotate(18deg)}}
+#ith svg.dgs{position:absolute;left:0;top:0;width:150px;height:170px;overflow:visible;pointer-events:none;z-index:6}
+#ith svg.dgs.lose .dgrp{animation:ithdog2 1.2s ease-out 1.7s backwards}
+@keyframes ithdog2{0%{opacity:0;transform:translateX(-190px)}8%{opacity:1}100%{opacity:1;transform:none}}
+#ith svg.dgs.lose .dgl.a{animation:ithdl .2s ease-in-out 1.7s 6 alternate}
+#ith svg.dgs.lose .dgl.b{animation:ithdl .2s ease-in-out 1.7s 6 alternate-reverse}
+#ith svg.dgs.lose .dgt{animation:ithwag .15s ease-in-out 2.9s infinite alternate}
+#ith svg.dgs.lose .dh{animation:ithlick .5s ease-in-out 2.9s infinite}
+@keyframes ithlick{0%,100%{transform:translate(0,0)}50%{transform:translate(7px,15px)}}
+@media(prefers-reduced-motion:reduce){#ith .dgrp,#ith .dgl,#ith .dgt,#ith .dh,#ith .dgb{animation:none!important}}
+@media(max-width:480px){#ith .keys{grid-template-columns:repeat(7,1fr)}#ith .ch{width:26px;height:36px;font-size:1.2rem}}
+@media(prefers-reduced-motion:reduce){#ith svg.hm.shake{animation:none}}
+</style>
+
+<div class="card">
+  <h2>VET Hangman</h2>
+  <p class="sub">Guess the vet ER term. 2 chances per word. Your best score can make the Top 3.</p>
+
+  <div id="ith-login">
+    <label for="ith-name"><b>Enter your name to play</b></label>
+    <input class="nm" id="ith-name" maxlength="14" placeholder="Your name" autocomplete="off">
+    <button class="btn" id="ith-start" type="button">Start game</button>
+  </div>
+
+  <div id="ith-game" hidden>
+    <div class="bar">
+      <span class="pill" id="ith-who"></span>
+      <span class="pill try" id="ith-try"></span>
+      <span class="pill" id="ith-miss"></span>
+      <span class="pill" id="ith-score"></span>
+    </div>
+    <div class="stage">
+      <div class="wrap"><svg class="hm" id="ith-hm" viewBox="0 0 150 170" aria-hidden="true">
+        <path class="g" d="M15 160H100M35 160V12H105V32"/>
+        <circle class="p" cx="105" cy="46" r="14"/>
+        <path class="p" d="M105 60V105"/>
+        <path class="p" d="M105 72L86 92"/>
+        <path class="p" d="M105 72L124 92"/>
+        <path class="p" d="M105 105L88 135"/>
+        <path class="p" d="M105 105L122 135"/>
+      </svg>
+      <div id="ith-actor" hidden><svg viewBox="0 0 150 170">
+        <g class="hd"><circle class="f head" cx="105" cy="46" r="14"/>
+        <path class="smile" d="M98 50Q105 58 112 50" stroke="#14213d" stroke-width="2.5" fill="none"/>
+        <g class="cry" stroke="#14213d" stroke-width="2.5" fill="none" stroke-linecap="round"><path d="M95 35L102 38M115 35L108 38M96 43Q100 47 104 43M106 43Q110 47 114 43M98 56Q105 50 112 56"/><circle class="tear" cx="100" cy="47" r="2.6"/><circle class="tear" cx="110" cy="47" r="2.6"/></g></g>
+        <path class="f" d="M105 60V105"/>
+        <path class="f down" d="M105 72L86 92M105 72L124 92"/>
+        <path class="f up arm" d="M105 72L86 52"/><path class="f up arm b" d="M105 72L124 52"/>
+        <path class="f leg" d="M105 105L88 135"/><path class="f leg b" d="M105 105L122 135"/>
+      </svg><svg class="dgw" viewBox="0 0 150 170"><g class="dgrp"><g class="dgb"><path class="dgt" d="M131 113Q120 102 124 92"/><ellipse cx="150" cy="118" rx="21" ry="11" fill="#c98a4b" stroke="#8a5a2b" stroke-width="2"/><path class="dgl a" d="M138 126V135"/><path class="dgl b" d="M144 126V135"/><path class="dgl b" d="M158 126V135"/><path class="dgl a" d="M164 126V135"/><g class="dh"><circle cx="174" cy="108" r="10" fill="#c98a4b" stroke="#8a5a2b" stroke-width="2"/><ellipse cx="184" cy="112" rx="7" ry="5" fill="#e0a867" stroke="#8a5a2b" stroke-width="1.5"/><circle cx="189" cy="110" r="2" fill="#14213d"/><circle cx="176" cy="105" r="1.8" fill="#14213d"/><path d="M168 99Q161 111 170 115" fill="#8a5a2b" stroke="#8a5a2b" stroke-width="2"/><path d="M184 117Q186 125 190 119" stroke="#ff7a8a" stroke-width="3.5" fill="none" stroke-linecap="round"/></g></g></g></svg></div><svg id="ith-dog2" class="dgs" viewBox="0 0 150 170" hidden><g transform="translate(396,25) scale(-1,1)"><g class="dgrp"><g class="dgb"><path class="dgt" d="M131 113Q120 102 124 92"/><ellipse cx="150" cy="118" rx="21" ry="11" fill="#c98a4b" stroke="#8a5a2b" stroke-width="2"/><path class="dgl a" d="M138 126V135"/><path class="dgl b" d="M144 126V135"/><path class="dgl b" d="M158 126V135"/><path class="dgl a" d="M164 126V135"/><g class="dh"><circle cx="174" cy="108" r="10" fill="#c98a4b" stroke="#8a5a2b" stroke-width="2"/><ellipse cx="184" cy="112" rx="7" ry="5" fill="#e0a867" stroke="#8a5a2b" stroke-width="1.5"/><circle cx="189" cy="110" r="2" fill="#14213d"/><circle cx="176" cy="105" r="1.8" fill="#14213d"/><path d="M168 99Q161 111 170 115" fill="#8a5a2b" stroke="#8a5a2b" stroke-width="2"/><path d="M184 117Q186 125 190 119" stroke="#ff7a8a" stroke-width="3.5" fill="none" stroke-linecap="round"/></g></g></g></g></svg></div>
+      <div class="info">
+        <p class="hint" id="ith-hint"></p>
+        <div class="word" id="ith-word" aria-live="polite"></div>
+      </div>
+    </div>
+    <div class="keys" id="ith-keys"></div>
+    <div class="msg" id="ith-msg" aria-live="polite"></div>
+    <button class="btn" id="ith-next" type="button" hidden></button>
+    <button class="btn" id="ith-swap" type="button" style="background:#fff;color:#14213d">Change player</button>
+  </div>
+
+  <div class="lb"><b>Top 3 players</b><ol id="ith-lb"></ol></div>
+  <canvas id="ith-fx"></canvas>
+  <div id="ith-cheer"></div>
+</div>
+
+<script>
+(function(){
+  // [word, hint, meaning] separated by |
+  var RAW=("TRIAGE|Sorting patients by urgency|Ranking patients so the sickest are treated first.\nSHOCK|Circulation failing to meet tissue needs|Inadequate blood flow and oxygen delivery to tissues.\nBLOAT|Swollen stomach in big dogs|Gastric dilatation, sometimes with twisting.\nGDV|Twisted stomach in deep-chested dogs|Gastric dilatation-volvulus, a surgical emergency.\nSEIZURE|Uncontrolled brain activity|Sudden abnormal electrical activity causing convulsions.\nDIAZEPAM|Benzodiazepine that stops seizures|A sedative used to treat seizures.\nHYPOGLYCEMIA|Dangerously low blood sugar|Low glucose that can cause weakness and seizures.\nHYPERKALEMIA|High potassium in the blood|Excess potassium that can disrupt heart rhythm.\nHYPOTHERMIA|Body temperature too low|Abnormally low body temperature.\nHYPERTHERMIA|Body temperature too high|Abnormally high body temperature.\nHEATSTROKE|Overheating, often from hot cars|Life-threatening hyperthermia with organ damage.\nINTUBATION|Placing a tube in the airway|Inserting a tube to secure breathing.\nENDOTRACHEAL|Type of airway tube|A tube placed in the trachea for oxygen or anesthesia.\nCPR|Chest compressions and breaths|Cardiopulmonary resuscitation.\nDEFIBRILLATOR|Shocks the heart back into rhythm|A device that delivers an electric shock to fix arrhythmia.\nEPINEPHRINE|Adrenaline for arrest and allergy|A drug that boosts heart function and opens airways.\nATROPINE|Raises a slow heart rate|Used for bradycardia and some toxicities.\nANAPHYLAXIS|Severe allergic reaction|A rapid, life-threatening allergic response.\nTOURNIQUET|Stops limb bleeding|A band that cuts off blood flow to a limb.\nHEMORRHAGE|Heavy bleeding|Escape of blood from vessels.\nHEMOABDOMEN|Blood in the belly|Free blood in the abdomen, often from a ruptured mass.\nPNEUMOTHORAX|Air in the chest cavity|Air outside the lung that causes it to collapse.\nTHORACOCENTESIS|Draining the chest|Needle removal of fluid or air from the chest.\nABDOMINOCENTESIS|Sampling belly fluid|Needle collection of fluid from the abdomen.\nTAMPONADE|Fluid squeezing the heart|Pericardial fluid that stops the heart filling properly.\nARRHYTHMIA|Irregular heartbeat|An abnormal heart rhythm.\nBRADYCARDIA|Slow heart rate|A heart rate below normal.\nTACHYCARDIA|Fast heart rate|A heart rate above normal.\nCYANOSIS|Blue-tinted gums|Bluish color caused by low oxygen.\nDYSPNEA|Hard to breathe|Difficult or labored breathing.\nTACHYPNEA|Fast breathing|Abnormally rapid breathing.\nSTRIDOR|Noisy upper airway breathing|A harsh sound from airway obstruction.\nBRACHYCEPHALIC|Flat-faced breeds like pugs|Short-skulled breeds prone to airway trouble.\nOXYGEN|Given by mask or cage|Gas supplied to treat low blood oxygen.\nPERFUSION|Blood delivery to tissues|The flow of blood through tissues.\nHYPOVOLEMIA|Low blood volume|Reduced circulating blood volume.\nCRYSTALLOID|Isotonic IV fluid type|Fluids like lactated Ringer's used for resuscitation.\nCOLLOID|Large-molecule IV fluid|Fluid that stays in the vessels and holds water in.\nTRANSFUSION|Giving blood products|Transferring blood or components to a patient.\nANEMIA|Low red blood cells|Reduced red cells or hemoglobin.\nHEMATOCRIT|Percent of blood that is red cells|Also called packed cell volume.\nLACTATE|Rises when tissues lack oxygen|A blood marker of poor perfusion.\nAZOTEMIA|High waste in the blood|Elevated BUN and creatinine.\nUREMIA|Toxins from kidney failure|Signs caused by retained kidney waste.\nCREATININE|Kidney value on bloodwork|A waste product used to assess kidney function.\nOLIGURIA|Low urine output|Reduced urine production.\nANURIA|No urine at all|Absence of urine production.\nCATHETER|Thin tube for a vein or bladder|A flexible tube for fluids or drainage.\nCYSTOCENTESIS|Needle urine sample|Collecting urine through the abdominal wall.\nPANCREATITIS|Inflamed pancreas|Inflammation causing vomiting and belly pain.\nGASTROENTERITIS|Stomach and gut inflammation|Inflammation causing vomiting and diarrhea.\nPARVOVIRUS|Bloody diarrhea in puppies|A highly contagious canine viral disease.\nDISTEMPER|Virus with seizures and cough|A contagious virus affecting many body systems.\nLEPTOSPIROSIS|Water-borne kidney infection|A zoonotic bacterial disease spread by urine.\nPYOMETRA|Pus-filled uterus|A life-threatening uterine infection.\nDYSTOCIA|Difficult birth|Abnormal or difficult labor.\nCESAREAN|Surgical delivery|A C-section to deliver puppies or kittens.\nECLAMPSIA|Low calcium in nursing mothers|Hypocalcemia causing tremors after whelping.\nTOXICITY|Poisoning|Harmful effects from a substance.\nXYLITOL|Sweetener toxic to dogs|A sugar substitute causing low sugar and liver failure.\nTHEOBROMINE|Toxin in chocolate|A methylxanthine harmful to dogs.\nANTIFREEZE|Sweet-tasting kidney killer|Ethylene glycol coolant causing kidney failure.\nRODENTICIDE|Rat poison|Poison causing bleeding or neurologic signs.\nWARFARIN|Anticoagulant poison type|A blood thinner that prevents clotting.\nACETAMINOPHEN|Tylenol, deadly to cats|A painkiller that is highly toxic to cats.\nIBUPROFEN|Human NSAID causing ulcers|A painkiller that damages pets' stomach and kidneys.\nEMESIS|Vomiting|The act of vomiting, sometimes induced after toxins.\nAPOMORPHINE|Induces vomiting in dogs|An emetic used after toxin ingestion.\nLAVAGE|Washing out a cavity|Flushing a body cavity such as the stomach.\nANTIDOTE|Counters a poison|A substance that neutralizes a toxin.\nFOMEPIZOLE|Antifreeze antidote|A drug that blocks ethylene glycol metabolism.\nNALOXONE|Reverses opioids|An opioid antagonist for overdose.\nFLUMAZENIL|Reverses benzodiazepines|A benzodiazepine antagonist.\nSEDATION|Calm but responsive|Drug-induced relaxation.\nANESTHESIA|Loss of sensation|Drug-induced loss of consciousness or pain.\nPROPOFOL|Fast IV induction drug|A short-acting anesthetic.\nKETAMINE|Dissociative anesthetic|A drug used for anesthesia and pain.\nOPIOID|Strong painkiller class|Drugs like morphine and fentanyl.\nFENTANYL|Potent ER painkiller|A powerful opioid given by injection or infusion.\nBUPRENORPHINE|Common opioid for cats|A partial opioid used for pain.\nANALGESIA|Pain relief|Reduction or absence of pain.\nOXIMETER|Clips on to read oxygen|A device measuring blood oxygen saturation.\nCAPNOGRAPHY|Measures exhaled CO2|Monitoring carbon dioxide in breath.\nDOPPLER|Ultrasound probe for blood pressure|Used to hear blood flow and measure pressure.\nELECTROCARDIOGRAM|Heart's electrical tracing|An ECG recording of heart rhythm.\nRADIOGRAPH|X-ray image|A picture made with X-rays.\nULTRASOUND|Sound-wave imaging|Imaging that uses sound waves.\nFRACTURE|Broken bone|A break in a bone.\nLUXATION|Dislocated joint|Displacement of a joint.\nSPLINT|Immobilizes a limb|Support used to stabilize a fracture.\nLACERATION|Cut or tear in skin|A wound with torn edges.\nABSCESS|Pocket of pus|A collection of pus from infection.\nDEBRIDEMENT|Removing dead tissue|Cleaning dead or contaminated tissue from a wound.\nSUTURE|Stitch that closes a wound|Thread used to close tissues.\nENVENOMATION|Snake or spider bite|Injection of venom into the body.\nANTIVENIN|Counters snake venom|Antibodies that neutralize venom.\nDROWNING|Water in the lungs|Breathing impairment from submersion.\nELECTROCUTION|Cord-chewing injury|Injury caused by electric current.\nHYPOCALCEMIA|Low calcium|Low blood calcium that can cause tremors.\nHYPONATREMIA|Low sodium|Low blood sodium.\nACIDOSIS|Blood too acidic|Low blood pH.\nALKALOSIS|Blood too basic|High blood pH.\nKETOACIDOSIS|Diabetic emergency|High ketones and acid in uncontrolled diabetes.\nINSULIN|Lowers blood sugar|The hormone that controls glucose.\nADDISONIAN|Low cortisol crisis|Collapse from hypoadrenocorticism.\nTHROMBOEMBOLISM|Clot blocking an artery|Often causes sudden hind leg paralysis in cats.\nCARDIOMYOPATHY|Diseased heart muscle|A heart muscle disease common in cats.\nFUROSEMIDE|Lasix, diuretic for lung fluid|A diuretic used in heart failure.\nEDEMA|Fluid swelling|Abnormal fluid in tissue.\nASCITES|Fluid in the abdomen|Abnormal fluid in the belly.\nPERITONITIS|Inflamed abdominal lining|Serious inflammation, often from leaks or infection.\nSEPSIS|Body overreacts to infection|A life-threatening response to infection.\nINTUSSUSCEPTION|Bowel telescoping into itself|One part of intestine slides into the next.\nOBSTRUCTION|Blockage|Something blocking a passage, like a foreign body.\nREGURGITATION|Passive food return|Food coming up without effort.\nMELENA|Black tarry stool|Digested blood in feces.\nHEMATEMESIS|Vomiting blood|Blood in vomit.\nHEMATURIA|Blood in urine|Blood in the urine.\nPETECHIAE|Tiny red skin spots|Pinpoint bleeds that suggest clotting problems.\nTHROMBOCYTOPENIA|Low platelets|A reduced platelet count.\nCOAGULOPATHY|Clotting disorder|Abnormal blood clotting.\nIMHA|Immune attack on red cells|Immune-mediated hemolytic anemia.\nEUTHANASIA|Humane painless death|Ending life humanely to prevent suffering.\nZOONOTIC|Spreads from animals to people|A disease transmissible to humans.\nRABIES|Fatal virus, vaccine prevents it|A viral disease of the nervous system.\nVACCINE|Prevents disease|A product that stimulates immunity.\nCONSENT|Permission to treat|The owner's agreement to proceed.\nDNR|Do not resuscitate|An owner's choice not to attempt CPR.\nCRASHCART|Holds emergency drugs|A mobile cart of resuscitation supplies.\nLARYNGOSCOPE|Lit blade to see the airway|A tool used for intubation.\nVENTILATOR|Breathes for the patient|A machine that provides mechanical breaths.\nSTETHOSCOPE|Listen to heart and lungs|An instrument for auscultation.\nAUSCULTATION|Listening with a scope|Listening to internal body sounds.\nPALPATION|Examining by touch|Feeling the body to detect abnormalities.\nHEPARIN|Prevents clots in lines|An anticoagulant used to flush catheters.\nDEXTROSE|Sugar given for low glucose|Glucose given intravenously.\nBICARBONATE|Buffer for acidosis|Used to raise blood pH.\nVASOPRESSOR|Raises blood pressure|A drug that tightens blood vessels.\nLIDOCAINE|Local anesthetic and heart drug|Numbs tissue and treats some arrhythmias.\nMANNITOL|Reduces brain swelling|An osmotic diuretic for high intracranial pressure.\nCONCUSSION|Brain jolt|A mild traumatic brain injury.\nPARALYSIS|Loss of movement|Inability to move a body part.\nIVDD|Disc disease in dachshunds|Intervertebral disc disease.\nVESTIBULAR|Head tilt and falling over|A balance disorder of the inner ear or brain.\nNYSTAGMUS|Jerking eyes|Involuntary rhythmic eye movement.\nPROPTOSIS|Eye pops from the socket|Displacement of the eyeball forward.\nHYPHEMA|Blood inside the eye|Blood in the front chamber of the eye.\nGLAUCOMA|Painful eye pressure|High pressure inside the eye.\nFLUORESCEIN|Dye that shows eye ulcers|A stain that highlights corneal damage.\nTRACHEOSTOMY|Surgical airway opening in the neck|A surgical hole in the windpipe that bypasses an upper airway blockage.");
+  var BANK=RAW.split("\n").map(function(l){return l.split("|")});
+  var CHEERS=["Pawsome!","Purr-fect!","Life saver!","Awesome!","Legend!","Nailed it!","Brilliant!","Tech wizard!","Genius!","Boom!","Superstar!","Well played!","Byte-sized brilliance!","You rock!","Unstoppable!"];
+  var MAXMISS=6,CHANCES=2,KEY="vet_top3";
+  var $=function(id){return document.getElementById(id)};
+  var parts=document.querySelectorAll("#ith svg.hm .p"),hm=$("ith-hm"),act=$("ith-actor"),dog2=$("ith-dog2"),actT=null;
+  function hideActor(){clearTimeout(actT);dog2.setAttribute("hidden","");dog2.setAttribute("class","dgs");act.hidden=true;act.className="";document.documentElement.style.overflowX=""}
+  function showActor(c){hideActor();act.hidden=false;void act.offsetWidth;act.className=c;if(c==="dead"){dog2.removeAttribute("hidden");void dog2.getBoundingClientRect();dog2.setAttribute("class","dgs lose")}
+    if(c==="win"&&!matchMedia("(prefers-reduced-motion: reduce)").matches){document.documentElement.style.overflowX="hidden";actT=setTimeout(hideActor,5200)}}
+  var order=[],oi=0,entry,chance,miss,guessed,over,playing=false,score=0,streak=0,name="";
+
+  function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
+  function load(){try{return JSON.parse(localStorage.getItem(KEY))||[]}catch(e){return []}}
+  function save(n,s){
+    var l=load(),f=false;
+    l.forEach(function(r){if(r.n.toLowerCase()===n.toLowerCase()){f=true;if(s>r.s)r.s=s}});
+    if(!f)l.push({n:n,s:s});
+    l.sort(function(a,b){return b.s-a.s});
+    try{localStorage.setItem(KEY,JSON.stringify(l.slice(0,3)))}catch(e){}
+    drawLB();
+  }
+  function drawLB(){
+    var ol=$("ith-lb"),l=load(),m=["🥇","🥈","🥉"];ol.innerHTML="";
+    if(!l.length){ol.innerHTML="<li>No scores yet. Be the first!</li>";return}
+    l.forEach(function(r,i){var li=document.createElement("li"),a=document.createElement("span"),b=document.createElement("b");
+      a.textContent=m[i]+" "+r.n;b.textContent=r.s;b.style.display="inline";li.appendChild(a);li.appendChild(b);ol.appendChild(li)});
+  }
+
+  function startGame(){
+    var v=$("ith-name").value.trim();
+    if(!v){$("ith-name").focus();$("ith-name").placeholder="Please type a name first";return}
+    name=v.slice(0,14);try{localStorage.setItem("vet_last",name)}catch(e){}
+    score=0;streak=0;playing=true;
+    $("ith-login").hidden=true;$("ith-game").hidden=false;
+    $("ith-who").textContent="Player: "+name;
+    order=shuffle(BANK.slice());oi=0;newWord();
+  }
+  function swap(){playing=false;hideActor();$("ith-game").hidden=true;$("ith-login").hidden=false;hm.classList.remove("shake");$("ith-name").focus()}
+
+  function newWord(){
+    if(oi>=order.length){order=shuffle(BANK.slice());oi=0}
+    entry=order[oi++];chance=1;startChance();
+  }
+  function startChance(){
+    miss=0;guessed={};over=false;hideActor();
+    parts.forEach(function(p){p.classList.remove("on")});
+    hm.classList.toggle("shake",chance===2);
+    hm.style.animationDuration="0.3s";
+    buildKeys();$("ith-next").hidden=true;$("ith-next").classList.remove("red");
+    var m=$("ith-msg");
+    if(chance===1){m.className="msg";m.textContent="Pick a letter to begin."}
+    else{m.className="msg warn";m.textContent="⚠️ Final chance for this word! He is fighting for his life. Don't let him go."}
+    $("ith-hint").innerHTML="<b>Hint:</b> "+entry[1];
+    render();
+  }
+  function buildKeys(){
+    var k=$("ith-keys");k.innerHTML="";
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").forEach(function(c){
+      var b=document.createElement("button");b.textContent=c;b.type="button";b.setAttribute("aria-label","Letter "+c);
+      b.dataset.k=c;b.onclick=function(){guess(c)};k.appendChild(b);
+    });
+  }
+  function won(){return entry[0].split("").every(function(c){return guessed[c]===true})}
+  function render(){
+    var w=$("ith-word");w.innerHTML="";
+    entry[0].split("").forEach(function(c){var d=document.createElement("div");d.className="ch";d.textContent=guessed[c]===true?c:"";w.appendChild(d)});
+    var t=$("ith-try");t.textContent=chance===2?"LAST CHANCE":"Chance 1 of 2";t.className="pill "+(chance===2?"last":"try");
+    $("ith-miss").textContent="Misses "+miss+"/"+MAXMISS;
+    $("ith-score").textContent="Score "+score+(streak>1?" 🔥"+streak:"");
+  }
+  function guess(c){
+    if(!playing||over||guessed[c]!==undefined)return;
+    var b=document.querySelector('#ith-keys [data-k="'+c+'"]');b.disabled=true;
+    if(entry[0].indexOf(c)>-1){guessed[c]=true;b.className="ok"}
+    else{guessed[c]=false;b.className="no";if(parts[miss])parts[miss].classList.add("on");miss++;
+      if(chance===2)hm.style.animationDuration=Math.max(0.1,0.3-miss*0.04)+"s"}
+    if(won())finish(true);else if(miss>=MAXMISS)finish(false);else render();
+  }
+  function finish(ok){
+    over=true;hm.classList.remove("shake");
+    document.querySelectorAll("#ith-keys button").forEach(function(b){b.disabled=true});
+    var m=$("ith-msg"),n=$("ith-next");
+    if(ok){
+      var pts=chance===1?20:10;score+=pts;streak++;save(name,score);
+      parts.forEach(function(p){p.classList.remove("on")});showActor("win");
+      m.className="msg win";
+      m.innerHTML="<b>Correct! +"+pts+" points.</b><br><b>"+entry[0]+"</b>: "+entry[2];
+      n.textContent="Next term";n.onclick=newWord;
+      render();celebrate();
+    }else if(chance<CHANCES){
+      m.className="msg warn";
+      m.textContent="⚠️ That one got away. You have 1 LAST CHANCE at this word, and he will shake the whole way. Ready?";
+      n.textContent="Face the last chance";n.classList.add("red");n.onclick=function(){chance++;startChance()};
+      render();
+    }else{
+      streak=0;parts.forEach(function(p){p.classList.remove("on")});showActor("dead");m.className="msg lose";
+      m.textContent="He didn't make it this time, and he's crying, but a friendly dog is licking his face. Dry his tears and try a fresh term.";
+      n.textContent="Try a new term";n.onclick=newWord;
+      render();
+    }
+    n.hidden=false;n.focus();
+  }
+
+  // ----- Celebration: fireworks, cheers, walking hangman -----
+  var cv=$("ith-fx"),cx=cv.getContext("2d"),ps=[],raf=null,end=0;
+  function size(){cv.width=innerWidth;cv.height=innerHeight}
+  function burst(x,y){var h=Math.random()*360;for(var i=0;i<70;i++){var a=Math.random()*6.283,s=Math.random()*5+1.5;ps.push({x:x,y:y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,l:1,h:h+Math.random()*40})}}
+  function celebrate(){
+    var calm=matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var box=$("ith-cheer");
+    shuffle(CHEERS.slice()).slice(0,5).forEach(function(t,i){
+      setTimeout(function(){var s=document.createElement("div");s.className="cheer";s.textContent=t;
+        s.style.left=(5+Math.random()*60)+"%";s.style.top=(12+Math.random()*60)+"%";
+        box.appendChild(s);setTimeout(function(){s.remove()},2500)},i*350);
+    });
+    if(calm)return;
+    setTimeout(function(){w.hidden=true},4600);
+    size();end=Date.now()+3200;var n=0;
+    (function launch(){burst(innerWidth*(0.15+Math.random()*0.7),innerHeight*(0.12+Math.random()*0.4));if(++n<7)setTimeout(launch,380)})();
+    if(!raf)loop();
+  }
+  function loop(){
+    cx.globalCompositeOperation="destination-out";cx.fillStyle="rgba(0,0,0,.22)";cx.fillRect(0,0,cv.width,cv.height);
+    cx.globalCompositeOperation="lighter";
+    ps=ps.filter(function(p){return p.l>0.02});
+    ps.forEach(function(p){p.x+=p.vx;p.y+=p.vy;p.vy+=0.06;p.vx*=0.985;p.l*=0.972;cx.fillStyle="hsla("+p.h+",100%,60%,"+p.l+")";cx.beginPath();cx.arc(p.x,p.y,2.4,0,6.283);cx.fill()});
+    if(ps.length||Date.now()<end)raf=requestAnimationFrame(loop);else{cx.clearRect(0,0,cv.width,cv.height);raf=null}
+  }
+  addEventListener("resize",size);
+
+  document.addEventListener("keydown",function(e){
+    if(e.ctrlKey||e.metaKey||e.altKey)return;
+    var t=document.activeElement.tagName;
+    if(t==="INPUT"){if(e.key==="Enter"&&document.activeElement.id==="ith-name")startGame();return}
+    var c=e.key.toUpperCase();if(c.length===1&&c>="A"&&c<="Z")guess(c);
+  });
+  $("ith-start").onclick=startGame;$("ith-swap").onclick=swap;
+  try{$("ith-name").value=localStorage.getItem("vet_last")||""}catch(e){}
+  drawLB();
+})();
+</script>
+</section>
+<!-- ===== END ===== -->
+
+</body>
+</html>
